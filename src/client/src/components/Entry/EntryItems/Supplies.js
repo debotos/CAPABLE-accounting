@@ -68,6 +68,9 @@ const SelectTypeOptions = [
 	</Option>,
 	<Option key="2" value={`cheque`}>
 		Cheque
+	</Option>,
+	<Option key="3" value={`bank transfer`}>
+		Bank Transfer
 	</Option>
 ]
 

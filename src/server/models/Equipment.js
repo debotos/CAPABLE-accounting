@@ -51,7 +51,7 @@ const Schema = new mongoose.Schema(
 			trim: true
 		},
 		type: {
-			// Cash or Cheque
+			// Cash, Bank Transfer, Cheque
 			type: String,
 			required: true,
 			minlength: 2,

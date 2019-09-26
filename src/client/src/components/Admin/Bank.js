@@ -79,6 +79,7 @@ export class Bank extends Component {
 		const supplyError = isFieldTouched('supply') && getFieldError('supply')
 		const equipmentError = isFieldTouched('equipment') && getFieldError('equipment')
 		const travelError = isFieldTouched('travel') && getFieldError('travel')
+		const fieldVisitError = isFieldTouched('fieldVisit') && getFieldError('fieldVisit')
 
 		if (loading)
 			return (
@@ -89,14 +90,14 @@ export class Bank extends Component {
 						marginTop: '15px'
 					}}
 				>
-					<Spin size="large" />
+					<Spin size='large' />
 				</div>
 			)
-		const { consultant, fringe, other, salary, supply, equipment, travel } = data
+		const { consultant, fringe, other, salary, supply, equipment, travel, field_visit } = data
 		return (
-			<Form layout="horizontal" onSubmit={this.handleSubmit}>
+			<Form layout='horizontal' onSubmit={this.handleSubmit}>
 				<Form.Item
-					label="Salaries And Wages Bank Issued Amount"
+					label='Salaries And Wages Bank Issued Amount'
 					validateStatus={salaryError ? 'error' : ''}
 					help={salaryError || ''}
 					{...formItemLayout}
@@ -114,7 +115,7 @@ export class Bank extends Component {
 					)}
 				</Form.Item>
 				<Form.Item
-					label="Fringe Bank Issued Amount"
+					label='Fringe Bank Issued Amount'
 					validateStatus={fringeError ? 'error' : ''}
 					help={fringeError || ''}
 					{...formItemLayout}
@@ -132,7 +133,7 @@ export class Bank extends Component {
 					)}
 				</Form.Item>
 				<Form.Item
-					label="Consultant Bank Issued Amount"
+					label='Consultant Bank Issued Amount'
 					validateStatus={consultantError ? 'error' : ''}
 					help={consultantError || ''}
 					{...formItemLayout}
@@ -150,7 +151,7 @@ export class Bank extends Component {
 					)}
 				</Form.Item>
 				<Form.Item
-					label="Supplies Bank Issued Amount"
+					label='Supplies Bank Issued Amount'
 					validateStatus={supplyError ? 'error' : ''}
 					help={supplyError || ''}
 					{...formItemLayout}
@@ -168,7 +169,7 @@ export class Bank extends Component {
 					)}
 				</Form.Item>
 				<Form.Item
-					label="Equipment Budget"
+					label='Equipment Budget'
 					validateStatus={equipmentError ? 'error' : ''}
 					help={equipmentError || ''}
 					{...formItemLayout}
@@ -186,7 +187,7 @@ export class Bank extends Component {
 					)}
 				</Form.Item>
 				<Form.Item
-					label="Travel Bank Issued Amount"
+					label='Travel Bank Issued Amount'
 					validateStatus={travelError ? 'error' : ''}
 					help={travelError || ''}
 					{...formItemLayout}
@@ -204,7 +205,25 @@ export class Bank extends Component {
 					)}
 				</Form.Item>
 				<Form.Item
-					label="Others Bank Issued Amount"
+					label='Field Visit Bank Issued Amount'
+					validateStatus={fieldVisitError ? 'error' : ''}
+					help={fieldVisitError || ''}
+					{...formItemLayout}
+				>
+					{getFieldDecorator('field_visit', {
+						initialValue: field_visit,
+						rules: [{ required: true, message: 'Provide Field Visit Bank Issued Amount!' }]
+					})(
+						<InputNumber
+							style={{ minWidth: '200px' }}
+							formatter={value => `৳ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+							parser={value => value.replace(/৳\s?|(,*)/g, '')}
+							min={0}
+						/>
+					)}
+				</Form.Item>
+				<Form.Item
+					label='Others Bank Issued Amount'
 					validateStatus={otherError ? 'error' : ''}
 					help={otherError || ''}
 					{...formItemLayout}
@@ -225,8 +244,8 @@ export class Bank extends Component {
 				<Form.Item {...formTailLayout}>
 					<Button
 						loading={working}
-						type="primary"
-						htmlType="submit"
+						type='primary'
+						htmlType='submit'
 						disabled={hasErrors(getFieldsError())}
 					>
 						Save

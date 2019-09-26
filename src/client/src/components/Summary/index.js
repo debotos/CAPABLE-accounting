@@ -8,6 +8,7 @@ import Consultant from './SummaryItems/Consultant'
 import Equipment from './SummaryItems/Equipment'
 import Supplies from './SummaryItems/Supplies'
 import Travel from './SummaryItems/Travel'
+import FieldVisit from './SummaryItems/FieldVisit'
 import Others from './SummaryItems/Others'
 import Contractual from './SummaryItems/Contractual'
 
@@ -28,12 +29,12 @@ export class Summary extends Component {
 				</Breadcrumb>
 				<Layout style={{ padding: '24px 0', background: '#fff' }}>
 					<Sider width={200} style={{ background: '#fff' }}>
-						<Menu mode="inline" defaultOpenKeys={['subMenu1']} style={{ height: '100%' }}>
+						<Menu mode='inline' defaultOpenKeys={['subMenu1']} style={{ height: '100%' }}>
 							<SubMenu
-								key="subMenu1"
+								key='subMenu1'
 								title={
 									<span>
-										<Icon type="folder-open" />
+										<Icon type='folder-open' />
 										Summary Options
 									</span>
 								}
@@ -76,6 +77,10 @@ export class Summary extends Component {
 						<Route
 							path={`${match.path}/travel`}
 							component={props => <Travel {...props} budgetYear={budgetYear} />}
+						/>
+						<Route
+							path={`${match.path}/field_visit`}
+							component={props => <FieldVisit {...props} budgetYear={budgetYear} />}
 						/>
 						<Route
 							path={`${match.path}/contractual`}
@@ -124,6 +129,10 @@ const MenuItems = [
 	{
 		label: 'Travel',
 		route: 'travel'
+	},
+	{
+		label: 'Field Visit',
+		route: 'field_visit'
 	},
 	{
 		label: 'Contractual',

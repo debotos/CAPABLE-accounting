@@ -37,6 +37,11 @@ const Schema = new mongoose.Schema(
 			required: true,
 			trim: true
 		},
+		field_visit: {
+			type: Number,
+			required: true,
+			trim: true
+		},
 		budgetYear: {
 			type: String,
 			required: true,

@@ -11,6 +11,7 @@ const Other = require('../models/Other')
 const Salary = require('../models/Salary')
 const Supply = require('../models/Supply')
 const Travel = require('../models/Travel')
+const FieldVisit = require('../models/FieldVisit')
 
 // @route   GET api/${version}/common
 // @desc    get Summary
@@ -25,7 +26,8 @@ router.get('/summary', auth, async (req, res) => {
 			salary: 0,
 			supply: 0,
 			equipment: 0,
-			travel: 0
+			travel: 0,
+			field_visit: 0
 		}
 
 		const bankQuery = await Bank.find(req.query)
@@ -96,6 +98,14 @@ router.get('/summary', auth, async (req, res) => {
 					travelsTotal + ((x.amount ? x.amount : 0) + (x.it ? x.it : 0) + (x.vat ? x.vat : 0)))
 		)
 
+		let fieldVisitTotal = 0
+		let fieldVisits = await FieldVisit.find(req.query)
+		fieldVisits = fieldVisits.forEach(
+			x =>
+				(fieldVisitTotal =
+					fieldVisitTotal + ((x.amount ? x.amount : 0) + (x.it ? x.it : 0) + (x.vat ? x.vat : 0)))
+		)
+
 		const costTotal =
 			consultantTotal +
 			equipmentTotal +
@@ -103,7 +113,8 @@ router.get('/summary', auth, async (req, res) => {
 			othersTotal +
 			salariesTotal +
 			suppliesTotal +
-			travelsTotal
+			travelsTotal +
+			fieldVisitTotal
 
 		return res.send({
 			originalBudget: budgetTotal,

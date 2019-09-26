@@ -18,7 +18,8 @@ router.get('/', auth, async (req, res) => {
 				salary: 0,
 				supply: 0,
 				equipment: 0,
-				travel: 0
+				travel: 0,
+				field_visit: 0
 			}
 		)
 	} catch (error) {

@@ -8,6 +8,7 @@ import Consultant from './EntryItems/Consultant'
 import Equipment from './EntryItems/Equipment'
 import Supplies from './EntryItems/Supplies'
 import Travel from './EntryItems/Travel'
+import FieldVisit from './EntryItems/FieldVisit'
 import Others from './EntryItems/Others'
 import Contractual from './EntryItems/Contractual'
 
@@ -27,12 +28,12 @@ export class Entry extends Component {
 				</Breadcrumb>
 				<Layout style={{ padding: '24px 0', background: '#fff' }}>
 					<Sider width={200} style={{ background: '#fff' }}>
-						<Menu mode="inline" defaultOpenKeys={['subMenu1']} style={{ height: '100%' }}>
+						<Menu mode='inline' defaultOpenKeys={['subMenu1']} style={{ height: '100%' }}>
 							<SubMenu
-								key="subMenu1"
+								key='subMenu1'
 								title={
 									<span>
-										<Icon type="folder-open" />
+										<Icon type='folder-open' />
 										Entry Options
 									</span>
 								}
@@ -75,6 +76,10 @@ export class Entry extends Component {
 						<Route
 							path={`${match.path}/travel`}
 							component={props => <Travel {...props} budgetYear={budgetYear} />}
+						/>
+						<Route
+							path={`${match.path}/field_visit`}
+							component={props => <FieldVisit {...props} budgetYear={budgetYear} />}
 						/>
 						<Route
 							path={`${match.path}/contractual`}
@@ -123,6 +128,10 @@ const MenuItems = [
 	{
 		label: 'Travel',
 		route: 'travel'
+	},
+	{
+		label: 'Field Visit',
+		route: 'field_visit'
 	},
 	{
 		label: 'Contractual',

@@ -22,14 +22,23 @@ import checkVoucher from '../../../utils/checkVoucher'
 const Option = Select.Option
 
 const SelectTypeOptions = [
-	<Option key="1" value={`cash`}>
+	<Option key='1' value={`cash`}>
 		Cash
 	</Option>,
-	<Option key="2" value={`cheque`}>
+	<Option key='2' value={`cheque`}>
 		Cheque
 	</Option>,
-	<Option key="3" value={`bank transfer`}>
+	<Option key='3' value={`bank transfer`}>
 		Bank Transfer
+	</Option>
+]
+
+const options = [
+	<Option key={1} value='Printing'>
+		Printing
+	</Option>,
+	<Option key={1} value='Advertisement'>
+		Advertisement
 	</Option>
 ]
 
@@ -138,27 +147,54 @@ export class Others extends Component {
 
 		return (
 			<>
-				<Form layout="inline" onSubmit={this.handleSubmit}>
+				<Form layout='inline' onSubmit={this.handleSubmit}>
 					<Form.Item validateStatus={voucherError ? 'error' : ''} help={voucherError || ''}>
 						{getFieldDecorator('voucher', {
 							rules: [{ required: true, message: 'Please provide Voucher No.!' }]
-						})(<Input placeholder="Voucher No." />)}
+						})(<Input placeholder='Voucher No.' />)}
 					</Form.Item>
 
 					<Form.Item validateStatus={othersError ? 'error' : ''} help={othersError || ''}>
 						{getFieldDecorator('others', {
-							rules: [{ required: true, message: 'Please provide Others Type!' }]
-						})(<Input placeholder="Others Type" />)}
+							rules: [
+								{ required: true, message: 'Please provide Others Type!' },
+								{
+									validator: (rule, value, callback) => {
+										if (value) {
+											if (value.length > 1) {
+												callback('Select Only One Type!')
+											} else if (value.length <= 1) {
+												callback()
+											}
+										}
+										callback('Select Type!')
+									}
+								}
+							]
+						})(
+							<Select
+								mode='tags'
+								style={{ minWidth: 200 }}
+								placeholder='Others Type'
+								showSearch
+								optionFilterProp='children'
+								filterOption={(input, option) =>
+									option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+								}
+							>
+								{options}
+							</Select>
+						)}
 					</Form.Item>
 
 					<Form.Item validateStatus={dateError ? 'error' : ''} help={dateError || ''}>
 						{getFieldDecorator('date', {
 							rules: [{ required: true, message: 'Please provide Date!' }]
-						})(<DatePicker placeholder="Select Date" />)}
+						})(<DatePicker placeholder='Select Date' />)}
 					</Form.Item>
 
 					<Form.Item
-						label="Amount"
+						label='Amount'
 						validateStatus={amountError ? 'error' : ''}
 						help={amountError || ''}
 					>
@@ -172,7 +208,7 @@ export class Others extends Component {
 							/>
 						)}
 					</Form.Item>
-					<Form.Item label="IT">
+					<Form.Item label='IT'>
 						{getFieldDecorator('it', {})(
 							<InputNumber
 								formatter={value => `৳ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
@@ -182,13 +218,13 @@ export class Others extends Component {
 						)}
 					</Form.Item>
 
-					<Form.Item label="VAT">
+					<Form.Item label='VAT'>
 						{getFieldDecorator('vat', {})(
 							<InputNumber
 								formatter={value => `৳ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
 								parser={value => value.replace(/৳\s?|(,*)/g, '')}
 								min={0}
-								placeholder="VAT"
+								placeholder='VAT'
 							/>
 						)}
 					</Form.Item>
@@ -201,14 +237,14 @@ export class Others extends Component {
 					</Form.Item>
 
 					<Form.Item validateStatus={codeError ? 'error' : ''} help={codeError || ''}>
-						{getFieldDecorator('code', {})(<Input placeholder="Economic code" />)}
+						{getFieldDecorator('code', {})(<Input placeholder='Economic code' />)}
 					</Form.Item>
 
 					<Form.Item>
 						<Button
 							loading={working}
-							type="primary"
-							htmlType="submit"
+							type='primary'
+							htmlType='submit'
 							disabled={hasErrors(getFieldsError())}
 						>
 							Add
@@ -223,7 +259,7 @@ export class Others extends Component {
 						deleteData={this.deleteData}
 					/>
 				) : (
-					<Spin size="large" />
+					<Spin size='large' />
 				)}
 			</>
 		)
@@ -270,12 +306,40 @@ class EditableCell extends React.Component {
 						}
 					],
 					initialValue: this.getInputValue(record, field)
-				})(<DatePicker placeholder="Select Date" />)
+				})(<DatePicker placeholder='Select Date' />)
+
 			case 'others':
 				return getFieldDecorator('others', {
 					initialValue: record[field],
-					rules: [{ required: true, message: 'Please provide Others Type!' }]
-				})(<Input placeholder="Others Type" />)
+					rules: [
+						{ required: true, message: 'Please provide Others Type!' },
+						{
+							validator: (rule, value, callback) => {
+								if (value) {
+									if (value.length > 1) {
+										callback('Select Only One Type!')
+									} else if (value.length <= 1) {
+										callback()
+									}
+								}
+								return
+							}
+						}
+					]
+				})(
+					<Select
+						mode='tags'
+						style={{ minWidth: 200 }}
+						placeholder='Others Type'
+						showSearch
+						optionFilterProp='children'
+						filterOption={(input, option) =>
+							option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+						}
+					>
+						{options}
+					</Select>
+				)
 
 			case 'it':
 				return getFieldDecorator('it', { initialValue: this.getInputValue(record, field) })(
@@ -292,7 +356,7 @@ class EditableCell extends React.Component {
 						formatter={value => `৳ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
 						parser={value => value.replace(/৳\s?|(,*)/g, '')}
 						min={0}
-						placeholder="VAT"
+						placeholder='VAT'
 					/>
 				)
 
@@ -304,7 +368,7 @@ class EditableCell extends React.Component {
 
 			case 'code':
 				return getFieldDecorator('code', { initialValue: this.getInputValue(record, field) })(
-					<Input placeholder="Economic code" />
+					<Input placeholder='Economic code' />
 				)
 
 			default:
@@ -448,7 +512,7 @@ class EditableTable extends React.Component {
 									// eslint-disable-next-line
 									<a
 										// eslint-disable-next-line
-										href="javascript:;"
+										href='javascript:;'
 										onClick={() => this.save(form, record.key)}
 										style={{ marginRight: 8 }}
 									>
@@ -456,7 +520,7 @@ class EditableTable extends React.Component {
 									</a>
 								)}
 							</EditableContext.Consumer>
-							<Popconfirm title="Sure to cancel?" onConfirm={() => this.cancel(record.key)}>
+							<Popconfirm title='Sure to cancel?' onConfirm={() => this.cancel(record.key)}>
 								{/* eslint-disable-next-line */}
 								<a>Cancel</a>
 							</Popconfirm>
@@ -468,12 +532,12 @@ class EditableTable extends React.Component {
 								Edit
 							</a>
 							<Popconfirm
-								title="Sure to delete?"
-								icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
+								title='Sure to delete?'
+								icon={<Icon type='question-circle-o' style={{ color: 'red' }} />}
 								onConfirm={() => this.delete(record.key)}
 							>
 								{/* eslint-disable-next-line */}
-								<a href="javascript:;" style={{ marginLeft: 8, color: '#e26a6a' }}>
+								<a href='javascript:;' style={{ marginLeft: 8, color: '#e26a6a' }}>
 									Delete
 								</a>
 							</Popconfirm>
@@ -572,21 +636,21 @@ class EditableTable extends React.Component {
 					style={{ width: 188, marginBottom: 8, display: 'block' }}
 				/>
 				<Button
-					type="primary"
+					type='primary'
 					onClick={() => this.handleSearch(selectedKeys, confirm)}
-					icon="search"
-					size="small"
+					icon='search'
+					size='small'
 					style={{ width: 90, marginRight: 8 }}
 				>
 					Search
 				</Button>
-				<Button onClick={() => this.handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+				<Button onClick={() => this.handleReset(clearFilters)} size='small' style={{ width: 90 }}>
 					Reset
 				</Button>
 			</div>
 		),
 		filterIcon: filtered => (
-			<Icon type="search" style={{ color: filtered ? '#1890ff' : undefined }} />
+			<Icon type='search' style={{ color: filtered ? '#1890ff' : undefined }} />
 		),
 		onFilter: (value, record) =>
 			record[dataIndex]
@@ -633,12 +697,12 @@ class EditableTable extends React.Component {
 		return (
 			<EditableContext.Provider value={this.props.form}>
 				<Table
-					size="small"
+					size='small'
 					components={components}
 					bordered
 					dataSource={this.props.data}
 					columns={columns}
-					rowClassName="editable-row"
+					rowClassName='editable-row'
 					pagination={{
 						onChange: this.cancel,
 						pageSize: 15

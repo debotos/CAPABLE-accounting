@@ -18,11 +18,7 @@ const Schema = new mongoose.Schema(
 			trim: true
 		},
 
-		others: {
-			type: String,
-			required: true,
-			trim: true
-		},
+		others: { type: Array, default: [] },
 
 		amount: {
 			type: Number,

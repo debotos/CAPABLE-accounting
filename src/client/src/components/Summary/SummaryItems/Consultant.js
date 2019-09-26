@@ -297,7 +297,7 @@ class TableView extends React.Component {
 				editable: true,
 				// 9
 				key: 'type',
-				filters: [{ text: 'Cash', value: 'cash' }, { text: 'Cheque', value: 'cheque' }],
+				filters: [{ text: 'Cash', value: 'cash' }, { text: 'Cheque', value: 'cheque' }, { text: 'Bank Transfer', value: 'bank transfer' }],
 				onFilter: (value, record) => record.type.includes(value),
 				sorter: (a, b) => a.type.length - b.type.length
 			},

@@ -22,7 +22,7 @@ import generateExcel from '../../../utils/generateExcel'
 const { RangePicker } = DatePicker
 const { Text, Paragraph } = Typography
 
-export class Salaries extends Component {
+export class Events extends Component {
 	componentDidMount() {
 		this._bootstrap(this.props.budgetYear)
 	}
@@ -38,6 +38,7 @@ export class Salaries extends Component {
 			message.error('Failed to load the Budget Data!')
 		}
 	}
+
 	getBank = async () => {
 		try {
 			this.setState({ loading: true })
@@ -53,11 +54,11 @@ export class Salaries extends Component {
 	_bootstrap = async budgetYear => {
 		try {
 			this.setState({ loading: true })
-			const response = await axios.get(`/api/v1/salaries?budgetYear=${budgetYear}`)
+			const response = await axios.get(`/api/v1/events?budgetYear=${budgetYear}`)
 			const data = response.data.map(x => ({ ...x, key: x._id })).reverse()
 			const budget = await this.getBudget()
 			const bank = await this.getBank()
-			this.setState({ data, budget: budget.salary, bank: bank.salary }, () =>
+			this.setState({ data, budget: budget.events, bank: bank.events }, () =>
 				this.setState({ loading: false })
 			)
 		} catch (error) {
@@ -107,7 +108,7 @@ export class Salaries extends Component {
 		if (loading) return <Spin size='large' />
 		return (
 			<>
-				<Card title='Salaries And Wages Budget Overview'>
+				<Card title='Event and Meetings Budget Overview'>
 					<Card type='inner' title='Budget'>
 						<div style={{ display: 'flex' }}>
 							<Text code>Original Budget:</Text>
@@ -141,13 +142,10 @@ export class Salaries extends Component {
 									icon='download'
 									size='small'
 									onClick={() =>
-										generateExcel(data, 'Salaries', [
+										generateExcel(data, 'Event and Meetings', [
 											'Voucher',
+											'Event and Meetings Type',
 											'Date',
-											'Month',
-											'Name',
-											'Designation',
-											'Category',
 											'Economic Code',
 											'Payment Type',
 											'Amount',
@@ -187,7 +185,7 @@ export class Salaries extends Component {
 	}
 }
 
-export default Salaries
+export default Events
 
 /*
 	*******************************
@@ -233,8 +231,14 @@ class TableView extends React.Component {
 			{
 				title: 'Voucher',
 				dataIndex: 'voucher',
-				width: '10%',
+				width: '15%',
 				...this.getColumnSearchProps('voucher')
+			},
+			{
+				title: 'Event and Meetings Type',
+				dataIndex: 'events',
+				width: '20%',
+				...this.getColumnSearchProps('events')
 			},
 			{
 				title: 'Date',
@@ -243,38 +247,12 @@ class TableView extends React.Component {
 				sorter: (a, b) => a.date - b.date
 			},
 			{
-				title: 'Month',
-				dataIndex: 'month',
-				width: '10%',
-				...this.getColumnSearchProps('month')
-			},
-			{
-				title: 'Name',
-				dataIndex: 'name',
-				width: '10%',
-				...this.getColumnSearchProps('name')
-			},
-			{
-				title: 'Designation',
-				dataIndex: 'designation',
-				width: '10%',
-				...this.getColumnSearchProps('designation')
-			},
-			{
-				title: 'Category',
-				dataIndex: 'category',
-				width: '10%',
-				editable: true,
-				...this.getColumnSearchProps('category')
-			},
-			{
 				title: 'Amount',
 				dataIndex: 'amount',
 				width: '10%',
 				// defaultSortOrder: 'descend',
 				sorter: (a, b) => a.amount - b.amount
 			},
-			// Editing 2
 			{
 				title: 'IT',
 				dataIndex: 'it',
@@ -385,7 +363,12 @@ class TableView extends React.Component {
 	})
 
 	render() {
-		const components = { body: { cell: Cell } }
+		const components = {
+			body: {
+				cell: Cell
+			}
+		}
+
 		const columns = this.columns.map(col => {
 			return {
 				...col,
@@ -396,6 +379,7 @@ class TableView extends React.Component {
 				})
 			}
 		})
+
 		return (
 			<EditableContext.Provider value={this.props.form}>
 				<Table

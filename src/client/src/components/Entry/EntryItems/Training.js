@@ -5,11 +5,11 @@ import {
 	Button,
 	DatePicker,
 	InputNumber,
+	Select,
 	Table,
 	Popconfirm,
 	Spin,
 	message,
-	Select,
 	Icon
 } from 'antd'
 import axios from 'axios'
@@ -19,12 +19,7 @@ import Highlighter from 'react-highlight-words'
 
 import checkVoucher from '../../../utils/checkVoucher'
 
-const { MonthPicker } = DatePicker
-const { Option } = Select
-
-function hasErrors(fieldsError) {
-	return Object.keys(fieldsError).some(field => fieldsError[field])
-}
+const Option = Select.Option
 
 const SelectTypeOptions = [
 	<Option key='1' value={`cash`}>
@@ -38,26 +33,103 @@ const SelectTypeOptions = [
 	</Option>
 ]
 
-export class Consultant extends Component {
+const options = [
+	<Option key={1} value='Venue'>
+		Venue
+	</Option>,
+	<Option key={2} value='Food'>
+		Food
+	</Option>,
+	<Option key={3} value='Per Diem'>
+		Per Diem
+	</Option>,
+	<Option key={4} value='Transport'>
+		Transport
+	</Option>,
+	<Option key={5} value='Resource Person'>
+		Resource Person
+	</Option>,
+	<Option key={6} value='Supporting Staff'>
+		Supporting Staff
+	</Option>,
+	<Option key={7} value='Logistic'>
+		Logistic
+	</Option>,
+	<Option key={8} value='Others'>
+		Others
+	</Option>
+]
+
+function hasErrors(fieldsError) {
+	return Object.keys(fieldsError).some(field => fieldsError[field])
+}
+
+export class Training extends Component {
 	componentDidMount() {
-		this.getConsultantList(this.props.budgetYear)
+		this.getTraining(this.props.budgetYear)
 		// To disabled submit button at the beginning.
 		this.props.form.validateFields()
 	}
 
-	getConsultantList = async budgetYear => {
+	getTraining = async budgetYear => {
 		try {
 			this.setState({ loading: true })
-			const response = await axios.get(`/api/v1/consultant?budgetYear=${budgetYear}`)
+			const response = await axios.get(`/api/v1/training?budgetYear=${budgetYear}`)
 			const data = response.data.map(x => ({ ...x, key: x._id })).reverse()
 			this.setState({ data }, () => this.setState({ loading: false }))
 		} catch (error) {
 			console.log(error)
-			message.error('Failed to load the consultant data!')
+			message.error('Failed to load the training data!')
 		}
 	}
 
 	state = { working: false, loading: true, data: [] }
+
+	handleSubmit = e => {
+		e.preventDefault()
+		this.props.form.validateFields(async (err, values) => {
+			if (!err) {
+				this.setState({ working: true })
+				console.log('Received values of Training form: ', values)
+				const voucherExist = await checkVoucher('training', values.voucher)
+				if (voucherExist) {
+					this.setState({ working: false })
+					return message.error('Voucher Code Already Exists!')
+				}
+				const data = {
+					voucher: values.voucher,
+					date: values.date.valueOf(),
+					training: values.training,
+					amount: values.amount,
+					budgetYear: this.props.budgetYear,
+					it: values.it,
+					vat: values.vat,
+					type: values.type,
+					code: values.code || ''
+				}
+				console.log('Training form data formated: ', data)
+				axios
+					.post('/api/v1/training', data)
+					.then(response => {
+						const data = response.data
+						console.log('Training form submit response: ', data)
+						/* Instant UI update */
+						this.addData(data)
+						this.setState({ working: false })
+						message.success('Added Successfully!')
+						// Clear the form
+						this.props.form.resetFields()
+						// To disabled submit button
+						this.props.form.validateFields()
+					})
+					.catch(error => {
+						console.log(error.message)
+						message.error('Failed to add!')
+						this.setState({ working: false })
+					})
+			}
+		})
+	}
 
 	updateData = (id, data) => {
 		const update = this.state.data.map(x => {
@@ -80,68 +152,14 @@ export class Consultant extends Component {
 		this.setState({ data: update })
 	}
 
-	handleSubmit = e => {
-		e.preventDefault()
-		this.props.form.validateFields(async (err, values) => {
-			if (!err) {
-				this.setState({ working: true })
-				console.log('Received values of Consultant form: ', values)
-				const voucherExist = await checkVoucher('consultant', values.voucher)
-				if (voucherExist) {
-					this.setState({ working: false })
-					return message.error('Voucher Code Already Exists!')
-				}
-				const data = {
-					voucher: values.voucher,
-					month: values.month.format('MMMM YYYY'),
-					date: values.date.valueOf(),
-					name: values.name,
-					designation: values.designation,
-					amount: values.amount,
-					budgetYear: this.props.budgetYear,
-					it: values.it,
-					vat: values.vat,
-					type: values.type,
-					code: values.code || ''
-				}
-				console.log('Consultant form data formated: ', data)
-				axios
-					.post('/api/v1/consultant', data)
-					.then(response => {
-						const data = response.data
-						console.log('Consultant form submit response: ', data)
-						/* Instant UI update */
-						this.addData(data)
-						this.setState({ working: false })
-						message.success('Added Successfully!')
-						// Clear the form
-						this.props.form.resetFields()
-						// To disabled submit button
-						this.props.form.validateFields()
-					})
-					.catch(error => {
-						console.log(error.message)
-						message.error('Failed to add!')
-						this.setState({ working: false })
-					})
-			}
-		})
-	}
-
-	onDateChange = (date, dateString) => {
-		console.log(date, dateString)
-	}
-
 	render() {
 		const { working, loading, data } = this.state
 		const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } = this.props.form
-		// Only show error after a field is touched.
+
 		const voucherError = isFieldTouched('voucher') && getFieldError('voucher')
-		const dateError = isFieldTouched('date') && getFieldError('date')
-		const monthError = isFieldTouched('month') && getFieldError('month')
-		const nameError = isFieldTouched('name') && getFieldError('name')
-		const designationError = isFieldTouched('designation') && getFieldError('designation')
 		const amountError = isFieldTouched('amount') && getFieldError('amount')
+		const dateError = isFieldTouched('date') && getFieldError('date')
+		const trainingError = isFieldTouched('training') && getFieldError('training')
 		const typeError = isFieldTouched('type') && getFieldError('type')
 		const codeError = isFieldTouched('code') && getFieldError('code')
 
@@ -154,29 +172,45 @@ export class Consultant extends Component {
 						})(<Input placeholder='Voucher No.' />)}
 					</Form.Item>
 
+					<Form.Item validateStatus={trainingError ? 'error' : ''} help={trainingError || ''}>
+						{getFieldDecorator('training', {
+							rules: [
+								{ required: true, message: 'Please provide Training Type!' },
+								{
+									validator: (rule, value, callback) => {
+										if (value) {
+											if (value.length > 1) {
+												callback('Select Only One Type!')
+											} else if (value.length <= 1) {
+												callback()
+											}
+										}
+										callback('Select Type!')
+									}
+								}
+							]
+						})(
+							<Select
+								mode='tags'
+								style={{ minWidth: 200 }}
+								placeholder='Training Type'
+								showSearch
+								optionFilterProp='children'
+								filterOption={(input, option) =>
+									option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+								}
+							>
+								{options}
+							</Select>
+						)}
+					</Form.Item>
+
 					<Form.Item validateStatus={dateError ? 'error' : ''} help={dateError || ''}>
 						{getFieldDecorator('date', {
 							rules: [{ required: true, message: 'Please provide Date!' }]
 						})(<DatePicker placeholder='Select Date' />)}
 					</Form.Item>
 
-					<Form.Item validateStatus={monthError ? 'error' : ''} help={monthError || ''}>
-						{getFieldDecorator('month', {
-							rules: [{ required: true, message: 'Please provide Month!' }]
-						})(<MonthPicker placeholder='Select month' />)}
-					</Form.Item>
-
-					<Form.Item validateStatus={nameError ? 'error' : ''} help={nameError || ''}>
-						{getFieldDecorator('name', {
-							rules: [{ required: true, message: 'Please provide Name!' }]
-						})(<Input placeholder='Name' />)}
-					</Form.Item>
-
-					<Form.Item validateStatus={designationError ? 'error' : ''} help={designationError || ''}>
-						{getFieldDecorator('designation', {
-							rules: [{ required: true, message: 'Provide Designation!' }]
-						})(<Input placeholder='Designation' />)}
-					</Form.Item>
 					<Form.Item
 						label='Amount'
 						validateStatus={amountError ? 'error' : ''}
@@ -192,7 +226,6 @@ export class Consultant extends Component {
 							/>
 						)}
 					</Form.Item>
-
 					<Form.Item label='IT'>
 						{getFieldDecorator('it', {})(
 							<InputNumber
@@ -251,9 +284,9 @@ export class Consultant extends Component {
 	}
 }
 
-const ConsultantForm = Form.create({ name: 'consultant_form' })(Consultant)
+const TrainingForm = Form.create({ name: 'training_form' })(Training)
 
-export default ConsultantForm
+export default TrainingForm
 
 /*
 	*******************************
@@ -292,16 +325,39 @@ class EditableCell extends React.Component {
 					],
 					initialValue: this.getInputValue(record, field)
 				})(<DatePicker placeholder='Select Date' />)
-			case 'month':
-				return getFieldDecorator(field, {
+
+			case 'training':
+				return getFieldDecorator('training', {
+					initialValue: record[field],
 					rules: [
+						{ required: true, message: 'Please provide Training Type!' },
 						{
-							required: true,
-							message: `Please Input ${title}!`
+							validator: (rule, value, callback) => {
+								if (value) {
+									if (value.length > 1) {
+										callback('Select Only One Type!')
+									} else if (value.length <= 1) {
+										callback()
+									}
+								}
+								return
+							}
 						}
-					],
-					initialValue: this.getInputValue(record, field)
-				})(<MonthPicker placeholder='Select month' />)
+					]
+				})(
+					<Select
+						mode='tags'
+						style={{ minWidth: 200 }}
+						placeholder='Training Type'
+						showSearch
+						optionFilterProp='children'
+						filterOption={(input, option) =>
+							option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+						}
+					>
+						{options}
+					</Select>
+				)
 
 			case 'it':
 				return getFieldDecorator('it', { initialValue: this.getInputValue(record, field) })(
@@ -350,8 +406,7 @@ class EditableCell extends React.Component {
 		switch (field) {
 			case 'date':
 				return moment(record[field])
-			case 'month':
-				return moment(record[field])
+
 			default:
 				return record[field]
 		}
@@ -407,35 +462,21 @@ class EditableTable extends React.Component {
 				...this.getColumnSearchProps('voucher')
 			},
 			{
+				title: 'Training Types',
+				dataIndex: 'training',
+				width: '15%',
+				editable: true,
+				...this.getColumnSearchProps('training')
+			},
+			{
 				title: 'Date',
 				dataIndex: 'date',
-				width: '10%',
+				width: '15%',
 				editable: true,
 				sorter: (a, b) => a.date - b.date
 			},
 			{
-				title: 'Month',
-				dataIndex: 'month',
-				width: '10%',
-				editable: true,
-				...this.getColumnSearchProps('month')
-			},
-			{
-				title: 'Name',
-				dataIndex: 'name',
-				width: '10%',
-				editable: true,
-				...this.getColumnSearchProps('name')
-			},
-			{
-				title: 'Designation',
-				dataIndex: 'designation',
-				width: '10%',
-				editable: true,
-				...this.getColumnSearchProps('designation')
-			},
-			{
-				title: 'Amount',
+				title: 'Total Cost',
 				dataIndex: 'amount',
 				width: '10%',
 				editable: true,
@@ -465,11 +506,7 @@ class EditableTable extends React.Component {
 				editable: true,
 				// 9
 				key: 'type',
-				filters: [
-					{ text: 'Cash', value: 'cash' },
-					{ text: 'Cheque', value: 'cheque' },
-					{ text: 'Bank Transfer', value: 'bank transfer' }
-				],
+				filters: [{ text: 'Cash', value: 'cash' }, { text: 'Cheque', value: 'cheque' }, { text: 'Bank Transfer', value: 'bank transfer' }],
 				onFilter: (value, record) => record.type.includes(value),
 				sorter: (a, b) => a.type.length - b.type.length
 			},
@@ -539,9 +576,9 @@ class EditableTable extends React.Component {
 		/* Instant UI update */
 		this.props.deleteData(key)
 		axios
-			.delete(`/api/v1/consultant/${key}`)
+			.delete(`/api/v1/training/${key}`)
 			.then(response => {
-				console.log('Consultant delete response ', response.data)
+				console.log('Training delete response ', response.data)
 				message.success('Successfully Deleted!')
 			})
 			.catch(error => {
@@ -553,27 +590,25 @@ class EditableTable extends React.Component {
 	save(form, key) {
 		form.validateFields((err, row) => {
 			if (!err) {
-				console.log('Received values of Consultant Update form: ', row)
+				console.log('Received values of Training Update form: ', row)
 				const data = {
 					voucher: row.voucher,
-					month: row.month.format('MMMM YYYY'),
 					date: row.date.valueOf(),
-					name: row.name,
-					designation: row.designation,
+					training: row.training,
 					amount: row.amount,
 					it: row.it,
 					vat: row.vat,
 					type: row.type,
 					code: row.code || ''
 				}
-				console.log('Consultant updated form data formated: ', data)
+				console.log('Training updated form data formated: ', data)
 				/* Instant UI update */
 				this.props.updateData(key, data)
 				axios
-					.post(`/api/v1/consultant/${key}`, data)
+					.post(`/api/v1/training/${key}`, data)
 					.then(response => {
 						const data = response.data
-						console.log('Consultant form update response: ', data)
+						console.log('Training form update response: ', data)
 						// To disabled submit button
 						this.props.form.validateFields()
 						this.cancel(key)

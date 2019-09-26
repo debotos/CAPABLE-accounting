@@ -11,9 +11,12 @@ export default (data, type, columns) => {
 			'payment type': x['type'].charAt(0).toUpperCase() + x['type'].slice(1),
 			'economic code': x.code,
 			total: (x.amount ? x.amount : 0) + (x.it ? x.it : 0) + (x.vat ? x.vat : 0),
-			'others type': x.others && x.others,
 			'supplies type': x.supplies && x.supplies[0],
+			'others type': x.others && x.others[0],
+			'event and meetings type': x.events && x.events[0],
+			'training type': x.training && x.training[0],
 			'equipment type': x.equipment,
+			category: x.category && x.category[0],
 			'd.a': x.da,
 			't.a': x.ta
 		}

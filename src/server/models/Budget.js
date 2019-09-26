@@ -12,11 +12,22 @@ const Schema = new mongoose.Schema(
 			required: true,
 			trim: true
 		},
+		training: {
+			type: Number,
+			required: true,
+			trim: true
+		},
+		events: {
+			type: Number,
+			required: true,
+			trim: true
+		},
 		other: {
 			type: Number,
 			required: true,
 			trim: true
 		},
+
 		salary: {
 			type: Number,
 			required: true,

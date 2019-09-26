@@ -10,6 +10,8 @@ import Supplies from './SummaryItems/Supplies'
 import Travel from './SummaryItems/Travel'
 import FieldVisit from './SummaryItems/FieldVisit'
 import Others from './SummaryItems/Others'
+import Events from './SummaryItems/Events'
+import Training from './SummaryItems/Training'
 import Contractual from './SummaryItems/Contractual'
 
 const { SubMenu } = Menu
@@ -87,6 +89,14 @@ export class Summary extends Component {
 							component={props => <Contractual {...props} budgetYear={budgetYear} />}
 						/>
 						<Route
+							path={`${match.path}/events`}
+							component={props => <Events {...props} budgetYear={budgetYear} />}
+						/>
+						<Route
+							path={`${match.path}/training`}
+							component={props => <Training {...props} budgetYear={budgetYear} />}
+						/>
+						<Route
 							path={`${match.path}/others`}
 							component={props => <Others {...props} budgetYear={budgetYear} />}
 						/>
@@ -137,6 +147,15 @@ const MenuItems = [
 	{
 		label: 'Contractual',
 		route: 'contractual'
+	},
+
+	{
+		label: 'Event and Meetings',
+		route: 'events'
+	},
+	{
+		label: 'Training',
+		route: 'training'
 	},
 	{
 		label: 'Others',

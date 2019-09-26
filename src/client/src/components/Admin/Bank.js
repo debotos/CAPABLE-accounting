@@ -76,10 +76,12 @@ export class Bank extends Component {
 		const consultantError = isFieldTouched('consultant') && getFieldError('consultant')
 		const fringeError = isFieldTouched('fringe') && getFieldError('fringe')
 		const otherError = isFieldTouched('other') && getFieldError('other')
+		const eventsError = isFieldTouched('events') && getFieldError('events')
+		const trainingError = isFieldTouched('training') && getFieldError('training')
 		const supplyError = isFieldTouched('supply') && getFieldError('supply')
 		const equipmentError = isFieldTouched('equipment') && getFieldError('equipment')
 		const travelError = isFieldTouched('travel') && getFieldError('travel')
-		const fieldVisitError = isFieldTouched('fieldVisit') && getFieldError('fieldVisit')
+		const fieldVisitError = isFieldTouched('field_visit') && getFieldError('field_visit')
 
 		if (loading)
 			return (
@@ -93,7 +95,18 @@ export class Bank extends Component {
 					<Spin size='large' />
 				</div>
 			)
-		const { consultant, fringe, other, salary, supply, equipment, travel, field_visit } = data
+		const {
+			consultant,
+			fringe,
+			other,
+			salary,
+			supply,
+			equipment,
+			travel,
+			field_visit,
+			events,
+			training
+		} = data
 		return (
 			<Form layout='horizontal' onSubmit={this.handleSubmit}>
 				<Form.Item
@@ -213,6 +226,42 @@ export class Bank extends Component {
 					{getFieldDecorator('field_visit', {
 						initialValue: field_visit,
 						rules: [{ required: true, message: 'Provide Field Visit Bank Issued Amount!' }]
+					})(
+						<InputNumber
+							style={{ minWidth: '200px' }}
+							formatter={value => `৳ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+							parser={value => value.replace(/৳\s?|(,*)/g, '')}
+							min={0}
+						/>
+					)}
+				</Form.Item>
+				<Form.Item
+					label='Event and Meetings Bank Issued Amount'
+					validateStatus={eventsError ? 'error' : ''}
+					help={eventsError || ''}
+					{...formItemLayout}
+				>
+					{getFieldDecorator('events', {
+						initialValue: events,
+						rules: [{ required: true, message: 'Provide Event and Meetings Bank Issued Amount!' }]
+					})(
+						<InputNumber
+							style={{ minWidth: '200px' }}
+							formatter={value => `৳ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+							parser={value => value.replace(/৳\s?|(,*)/g, '')}
+							min={0}
+						/>
+					)}
+				</Form.Item>
+				<Form.Item
+					label='Training Bank Issued Amount'
+					validateStatus={trainingError ? 'error' : ''}
+					help={trainingError || ''}
+					{...formItemLayout}
+				>
+					{getFieldDecorator('training', {
+						initialValue: training,
+						rules: [{ required: true, message: 'Provide Training Bank Issued Amount!' }]
 					})(
 						<InputNumber
 							style={{ minWidth: '200px' }}

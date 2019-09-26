@@ -27,7 +27,9 @@ router.get('/summary', auth, async (req, res) => {
 			supply: 0,
 			equipment: 0,
 			travel: 0,
-			field_visit: 0
+			field_visit: 0,
+			events: 0,
+			training: 0
 		}
 
 		const bankQuery = await Bank.find(req.query)
@@ -74,6 +76,22 @@ router.get('/summary', auth, async (req, res) => {
 					othersTotal + ((x.amount ? x.amount : 0) + (x.it ? x.it : 0) + (x.vat ? x.vat : 0)))
 		)
 
+		let trainingTotal = 0
+		let training = await Other.find(req.query)
+		training = training.forEach(
+			x =>
+				(trainingTotal =
+					trainingTotal + ((x.amount ? x.amount : 0) + (x.it ? x.it : 0) + (x.vat ? x.vat : 0)))
+		)
+
+		let eventsTotal = 0
+		let events = await Other.find(req.query)
+		events = events.forEach(
+			x =>
+				(eventsTotal =
+					eventsTotal + ((x.amount ? x.amount : 0) + (x.it ? x.it : 0) + (x.vat ? x.vat : 0)))
+		)
+
 		let salariesTotal = 0
 		let salaries = await Salary.find(req.query)
 		salaries = salaries.forEach(
@@ -114,7 +132,9 @@ router.get('/summary', auth, async (req, res) => {
 			salariesTotal +
 			suppliesTotal +
 			travelsTotal +
-			fieldVisitTotal
+			fieldVisitTotal +
+			eventsTotal +
+			trainingTotal
 
 		return res.send({
 			originalBudget: budgetTotal,

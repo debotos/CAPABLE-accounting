@@ -1,3 +1,5 @@
+// Events & Meetings
+
 const mongoose = require('mongoose')
 
 const Schema = new mongoose.Schema(
@@ -17,28 +19,9 @@ const Schema = new mongoose.Schema(
 			index: true,
 			trim: true
 		},
-		month: {
-			type: String,
-			required: true,
-			minlength: 1,
-			maxlength: 20,
-			trim: true
-		},
-		name: {
-			type: String,
-			required: true,
-			minlength: 2,
-			maxlength: 100,
-			trim: true
-		},
-		designation: {
-			type: String,
-			required: true,
-			minlength: 2,
-			maxlength: 100,
-			trim: true
-		},
-		category: { type: Array, default: [] },
+
+		events: { type: Array, default: [] },
+
 		amount: {
 			type: Number,
 			required: true,
@@ -80,4 +63,4 @@ const Schema = new mongoose.Schema(
 	}
 )
 
-module.exports = Salary = mongoose.model('Salary', Schema)
+module.exports = Events = mongoose.model('Events', Schema)

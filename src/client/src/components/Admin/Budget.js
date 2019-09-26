@@ -187,14 +187,14 @@ export class Budget extends Component {
 					)}
 				</Form.Item>
 				<Form.Item
-					label='Travel Budget'
+					label='Travel and Visa Budget'
 					validateStatus={travelError ? 'error' : ''}
 					help={travelError || ''}
 					{...formItemLayout}
 				>
 					{getFieldDecorator('travel', {
 						initialValue: travel,
-						rules: [{ required: true, message: 'Provide Travel Budget!' }]
+						rules: [{ required: true, message: 'Provide Travel and Visa Budget!' }]
 					})(
 						<InputNumber
 							style={{ minWidth: '200px' }}

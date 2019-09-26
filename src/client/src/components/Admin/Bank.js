@@ -187,14 +187,14 @@ export class Bank extends Component {
 					)}
 				</Form.Item>
 				<Form.Item
-					label='Travel Bank Issued Amount'
+					label='Travel and Visa Bank Issued Amount'
 					validateStatus={travelError ? 'error' : ''}
 					help={travelError || ''}
 					{...formItemLayout}
 				>
 					{getFieldDecorator('travel', {
 						initialValue: travel,
-						rules: [{ required: true, message: 'Provide Travel Bank Issued Amount!' }]
+						rules: [{ required: true, message: 'Provide Travel and Visa Bank Issued Amount!' }]
 					})(
 						<InputNumber
 							style={{ minWidth: '200px' }}

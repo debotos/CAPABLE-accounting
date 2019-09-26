@@ -127,7 +127,7 @@ const MenuItems = [
 		route: 'supplies'
 	},
 	{
-		label: 'Travel',
+		label: 'Travel and Visa',
 		route: 'travel'
 	},
 	{

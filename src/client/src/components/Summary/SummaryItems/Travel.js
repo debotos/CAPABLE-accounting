@@ -105,11 +105,11 @@ export class Travel extends Component {
 			data = data.filter(x => x.date >= startDate && x.date <= endDate)
 		}
 
-		if (loading) return <Spin size="large" />
+		if (loading) return <Spin size='large' />
 		return (
 			<>
-				<Card title="Travel Budget Overview">
-					<Card type="inner" title="Budget">
+				<Card title='Travel and Visa Budget Overview'>
+					<Card type='inner' title='Budget'>
 						<div style={{ display: 'flex' }}>
 							<Text code>Original Budget:</Text>
 							<Paragraph strong copyable>{`${numeral(budget).format('0,0.00')} ৳`}</Paragraph>
@@ -120,13 +120,13 @@ export class Travel extends Component {
 					</Card>
 					<Card
 						style={{ marginTop: 16 }}
-						type="inner"
-						title="Cost"
+						type='inner'
+						title='Cost'
 						extra={
 							<>
 								<RangePicker
 									placeholder={['Start month', 'End month']}
-									format="DD-MM-YYYY"
+									format='DD-MM-YYYY'
 									ranges={{
 										'This Month': [moment().startOf('month'), moment().endOf('month')]
 									}}
@@ -137,10 +137,10 @@ export class Travel extends Component {
 								<strong>View Details</strong>
 								<Switch style={{ margin: '0 30px 0 10px' }} onChange={this.onChange} />
 								<Button
-									type="dashed"
-									shape="circle"
-									icon="download"
-									size="small"
+									type='dashed'
+									shape='circle'
+									icon='download'
+									size='small'
 									onClick={() =>
 										generateExcel(data, 'Travel', [
 											'Voucher',
@@ -167,7 +167,7 @@ export class Travel extends Component {
 						</div>
 					</Card>
 
-					<Card style={{ marginTop: 16 }} type="inner" title="Balance">
+					<Card style={{ marginTop: 16 }} type='inner' title='Balance'>
 						<div style={{ display: 'flex' }}>
 							<Text code>Balance(Original):</Text>
 							<Paragraph mark strong copyable>{`${numeral(budget - totalMoney).format(
@@ -351,21 +351,21 @@ class TableView extends React.Component {
 					style={{ width: 188, marginBottom: 8, display: 'block' }}
 				/>
 				<Button
-					type="primary"
+					type='primary'
 					onClick={() => this.handleSearch(selectedKeys, confirm)}
-					icon="search"
-					size="small"
+					icon='search'
+					size='small'
 					style={{ width: 90, marginRight: 8 }}
 				>
 					Search
 				</Button>
-				<Button onClick={() => this.handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+				<Button onClick={() => this.handleReset(clearFilters)} size='small' style={{ width: 90 }}>
 					Reset
 				</Button>
 			</div>
 		),
 		filterIcon: filtered => (
-			<Icon type="search" style={{ color: filtered ? '#1890ff' : undefined }} />
+			<Icon type='search' style={{ color: filtered ? '#1890ff' : undefined }} />
 		),
 		onFilter: (value, record) =>
 			record[dataIndex]
@@ -408,12 +408,12 @@ class TableView extends React.Component {
 		return (
 			<EditableContext.Provider value={this.props.form}>
 				<Table
-					size="small"
+					size='small'
 					components={components}
 					bordered
 					dataSource={this.props.data}
 					columns={columns}
-					rowClassName="editable-row"
+					rowClassName='editable-row'
 					pagination={{ pageSize: 15 }}
 				/>
 			</EditableContext.Provider>
